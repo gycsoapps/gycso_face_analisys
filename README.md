@@ -1,4 +1,4 @@
-# Face Recognition API
+# Gycso Face Recognition API with Python and DeepFace
 
 A modern face recognition API built with FastAPI and DeepFace that allows comparing faces using base64-encoded images and AWS S3 storage.
 
@@ -226,10 +226,6 @@ The API can be configured with various options:
    - Increasing your system's swap space
 
 4. **S3 Connection Issues**: If you're using S3 integration, verify your AWS credentials and network connectivity.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Acknowledgments
 

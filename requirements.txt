@@ -1,0 +1,15 @@
+ # Core dependencies
+deepface==0.0.84
+fastapi==0.95.1
+uvicorn==0.22.0
+pydantic==1.10.7
+
+# Machine learning
+tensorflow==2.15.0
+keras==2.15.0
+
+# AWS integration
+boto3==1.26.135
+
+# Configuration
+python-dotenv==1.0.0
