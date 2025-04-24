@@ -1,3 +1,5 @@
+import os
+os.environ["DEEPFACE_HOME"] = "/tmp/.deepface"
 from deepface import DeepFace
 import numpy as np
 import logging
@@ -9,10 +11,23 @@ class FaceService:
     """Service for face recognition operations"""
     
     @staticmethod
-    async def compare_faces(
+    def preload_models(model_name: str) -> None:
+        """Preload face recognition models to improve performance"""
+        try:
+            logger.info(f"Preloading face model: {model_name}")
+            DeepFace.build_model(model_name)
+            
+                
+            logger.info(f"Models preloaded successfully: {model_name}")
+        except Exception as e:
+            logger.error(f"Error preloading models: {str(e)}")
+            raise e
+    
+    @staticmethod
+    def compare_faces(
         img1_array: np.ndarray, 
         img2_array: np.ndarray, 
-        model_name: str = "ArcFace",
+        model_name: str,
         enforce_detection: bool = False,
         detector_backend: str = "retinaface"
     ) -> Dict[str, Any]:
@@ -31,11 +46,11 @@ class FaceService:
             raise e
     
     @staticmethod
-    async def extract_face_embedding(
+    def extract_face_embedding(
         img_array: np.ndarray,
-        model_name: str = "ArcFace",
-        enforce_detection: bool = False,
-        detector_backend: str = "retinaface"
+        model_name: str,
+        enforce_detection: bool,
+        detector_backend: str
     ) -> np.ndarray:
         """Extract face embedding from image"""
         try:
@@ -48,4 +63,4 @@ class FaceService:
             return embedding
         except Exception as e:
             logger.error(f"Error extracting face embedding: {str(e)}")
-            raise e 
+            raise e

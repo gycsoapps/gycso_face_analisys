@@ -13,3 +13,7 @@ boto3==1.26.135
 
 # Configuration
 python-dotenv==1.0.0
+
+# Mangum
+mangum==0.17.0
+

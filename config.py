@@ -1,4 +1,3 @@
-import os
 from pydantic import BaseSettings
 from functools import lru_cache
 
@@ -6,11 +5,11 @@ class Settings(BaseSettings):
     """Application settings that can be loaded from environment variables or .env file"""
     AWS_ACCESS_KEY_ID: str = ""
     AWS_SECRET_ACCESS_KEY: str = ""
-    AWS_REGION: str = "us-east-1"
+    AWS_REGION: str = ""
     S3_BUCKET: str = ""
-    DEFAULT_MODEL: str = "ArcFace"
-    DEFAULT_DETECTOR: str = "retinaface"
-    LOG_LEVEL: str = "INFO"
+    DEFAULT_MODEL: str = ""
+    DEFAULT_DETECTOR: str = ""
+    LOG_LEVEL: str = ""
     
     # API settings
     API_TITLE: str = "Face Recognition API"

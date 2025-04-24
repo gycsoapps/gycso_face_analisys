@@ -1,26 +1,30 @@
-FROM python:3.9-slim
+# Dockerfile optimized for AWS Lambda with Face Recognition
+FROM public.ecr.aws/lambda/python:3.9
 
-WORKDIR /app
+
+# Set environment variable to redirect DeepFace cache to writable /tmp
+ENV DEEPFACE_HOME=/tmp/.deepface
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libgl1-mesa-glx \
-    libglib2.0-0 \
-    && rm -rf /var/lib/apt/lists/*
+RUN yum update -y && yum install -y \
+    mesa-libGL \
+    glib2 \
+    && yum clean all
 
 # Copy requirements first for better caching
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.txt ${LAMBDA_TASK_ROOT}/
+RUN pip install --no-cache-dir -r ${LAMBDA_TASK_ROOT}/requirements.txt
 
-# Copy application code
-COPY . .
 
-# Create upload directory
-RUN mkdir -p uploads
+# Preload models during container build (with reduced logging)
+# Preload model en una capa separada para aprovechar cache
+RUN python -c "import os; os.environ['DEEPFACE_HOME'] = '/tmp/.deepface'; from deepface import DeepFace; DeepFace.build_model('Facenet512')"
 
-# Expose port
-EXPOSE 8000
+# Copy Python files
+COPY *.py ${LAMBDA_TASK_ROOT}/
 
-# Run the application
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"] 
+# Handle .env file if it exists
+COPY .env ${LAMBDA_TASK_ROOT}/
+
+# Set the handler
+CMD ["app.handler"] 
