@@ -1,49 +1,49 @@
-# Gycso Face Recognition API with Python and DeepFace
+# API de Reconocimiento Facial Gycso con Python y DeepFace
 
-A modern face recognition API built with FastAPI and DeepFace that allows comparing faces using base64-encoded images and AWS S3 storage.
+Una API moderna de reconocimiento facial construida con FastAPI y DeepFace que permite comparar rostros utilizando imágenes codificadas en base64 y almacenamiento en AWS S3.
 
-## Features
+## Características
 
-- Compare two base64-encoded images to determine if they contain the same person
-- Compare a base64-encoded image with an image stored in AWS S3
-- In-memory image processing (no temporary files stored on disk)
-- Configurable face recognition models
-- Interactive API documentation with Swagger UI
+- Comparar dos imágenes codificadas en base64 para determinar si contienen la misma persona
+- Comparar una imagen codificada en base64 con una imagen almacenada en AWS S3
+- Procesamiento de imágenes en memoria (sin archivos temporales almacenados en disco)
+- Modelos de reconocimiento facial configurables
+- Documentación interactiva de la API con Swagger UI
 
-## Installation and Local Setup
+## Instalación y Configuración Local
 
-### Prerequisites
+### Prerequisitos
 
-- Python 3.8 or higher
-- pip (Python package installer)
+- Python 3.8 o superior
+- pip (instalador de paquetes de Python)
 - Git
 
-### Step 1: Clone the Repository
+### Paso 1: Clonar el Repositorio
 
 ```bash
 git clone https://github.com/yourusername/face-recognition-api.git
 cd face-recognition-api
 ```
 
-### Step 2: Create and Activate a Virtual Environment (Optional but Recommended)
+### Paso 2: Crear y Activar un Entorno Virtual (Opcional pero Recomendado)
 
 ```bash
-# On Windows
+# En Windows
 python -m venv venv
 venv\Scripts\activate
 
-# On macOS/Linux
+# En macOS/Linux
 python3 -m venv venv
 source venv/bin/activate
 ```
 
-### Step 3: Install Dependencies
+### Paso 3: Instalar Dependencias
 
 ```bash
 pip install -r requirements.txt
 ```
 
-This will install all required packages including:
+Esto instalará todos los paquetes requeridos incluyendo:
 - deepface
 - fastapi
 - python-multipart
@@ -53,79 +53,79 @@ This will install all required packages including:
 - numpy
 - opencv-python
 
-### Step 4: Configure AWS S3 (Optional - Only if Using S3 Integration)
+### Paso 4: Configurar AWS S3 (Opcional - Solo si se Utiliza la Integración con S3)
 
-Set up environment variables for AWS S3:
+Configurar variables de entorno para AWS S3:
 
 ```bash
-# On Windows
+# En Windows
 set AWS_ACCESS_KEY_ID=your_access_key
 set AWS_SECRET_ACCESS_KEY=your_secret_key
 set AWS_REGION=your_region
 set S3_BUCKET=your_bucket_name
 
-# On macOS/Linux
+# En macOS/Linux
 export AWS_ACCESS_KEY_ID=your_access_key
 export AWS_SECRET_ACCESS_KEY=your_secret_key
 export AWS_REGION=your_region
 export S3_BUCKET=your_bucket_name
 ```
 
-### Step 5: Run the API Server
+### Paso 5: Ejecutar el Servidor API
 
 ```bash
 uvicorn app:app --reload --host 0.0.0.0 --port 8000
 ```
 
-The API will be available at http://localhost:8000
+La API estará disponible en http://localhost:8000
 
-## Using the API
+## Uso de la API
 
-### Interactive API Documentation
+### Documentación Interactiva de la API
 
-The API comes with built-in interactive documentation powered by Swagger UI. To access it:
+La API viene con documentación interactiva integrada mediante Swagger UI. Para acceder:
 
-1. Start the API server as described above
-2. Open your browser and navigate to http://localhost:8000/docs
+1. Inicie el servidor API como se describió anteriormente
+2. Abra su navegador y vaya a http://localhost:8000/docs
 
-In the Swagger UI, you can:
-- See all available endpoints
-- Expand each endpoint to view request parameters
-- Try out the API directly by filling in the request forms
-- View response schemas and status codes
+En la interfaz de Swagger UI, puede:
+- Ver todos los endpoints disponibles
+- Expandir cada endpoint para ver los parámetros de solicitud
+- Probar la API directamente completando los formularios de solicitud
+- Ver esquemas de respuesta y códigos de estado
 
-Alternatively, you can access the ReDoc documentation at http://localhost:8000/redoc for a different documentation layout.
+Alternativamente, puede acceder a la documentación ReDoc en http://localhost:8000/redoc para un diseño de documentación diferente.
 
-### Available Endpoints
+### Endpoints Disponibles
 
-1. **POST /compare-base64**: Compare two base64-encoded images
-2. **POST /compare-with-s3**: Compare a base64-encoded image with an image stored in S3
+1. **POST /compare-base64**: Comparar dos imágenes codificadas en base64
+2. **POST /compare-with-s3**: Comparar una imagen codificada en base64 con una imagen almacenada en S3
 
-## Face Recognition Models
+## Modelos de Reconocimiento Facial
 
-DeepFace supports multiple state-of-the-art face recognition models. You can specify which model to use by setting the `model_name` parameter in the DeepFace.verify function.
+DeepFace soporta múltiples modelos de reconocimiento facial de última generación. Puede especificar qué modelo usar estableciendo el parámetro `model_name` en la función DeepFace.verify.
 
-| Model | Description | Size | Accuracy | Speed | Notes |
+| Modelo | Descripción | Tamaño | Precisión | Velocidad | Notas |
 |-------|-------------|------|----------|-------|-------|
-| VGG-Face | Based on the VGG-16 architecture | 515 MB | 96.7% | Medium | Default model, good balance of accuracy and speed |
-| Facenet | Google's FaceNet model | 91 MB | 97.4% | Fast | Good for mobile and edge devices |
-| Facenet512 | Improved FaceNet with 512D embeddings | 92 MB | 98.4% | Fast | Higher accuracy than original FaceNet |
-| OpenFace | Open source face recognition | 93 MB | 78.7% | Fast | Lightweight but less accurate |
-| DeepFace | Facebook's DeepFace model | 95 MB | 69.0% | Medium | Historical importance but outperformed by newer models |
-| DeepID | Deep hidden IDentity features | 29 MB | 66.5% | Fast | Compact but less accurate |
-| ArcFace | Additive Angular Margin Loss | 112 MB | 96.7% | Medium | Excellent for challenging angles and lighting |
-| Dlib | Dlib's ResNet model | 94 MB | 96.8% | Slow | Robust but slower than other options |
-| SFace | Efficient face recognition model | 112 MB | 93.0% | Fast | Good for resource-constrained environments |
-| GhostFaceNet | Lightweight face recognition | 24 MB | 93.3% | Very Fast | Best for mobile applications |
+| VGG-Face | Basado en la arquitectura VGG-16 | 515 MB | 96.7% | Media | Modelo predeterminado, buen equilibrio entre precisión y velocidad |
+| Facenet | Modelo FaceNet de Google | 91 MB | 97.4% | Rápida | Bueno para dispositivos móviles y de borde |
+| Facenet512 | FaceNet mejorado con embeddings de 512D | 92 MB | 98.4% | Rápida | Mayor precisión que el FaceNet original |
+| OpenFace | Reconocimiento facial de código abierto | 93 MB | 78.7% | Rápida | Ligero pero menos preciso |
+| DeepFace | Modelo DeepFace de Facebook | 95 MB | 69.0% | Media | Importancia histórica pero superado por modelos más nuevos |
+| DeepID | Características de identidad oculta profunda | 29 MB | 66.5% | Rápida | Compacto pero menos preciso |
+| ArcFace | Pérdida de margen angular aditivo | 112 MB | 96.7% | Media | Excelente para ángulos y iluminación desafiantes |
+| Dlib | Modelo ResNet de Dlib | 94 MB | 96.8% | Lenta | Robusto pero más lento que otras opciones |
+| SFace | Modelo eficiente de reconocimiento facial | 112 MB | 93.0% | Rápida | Bueno para entornos con recursos limitados |
+| GhostFaceNet | Reconocimiento facial ligero | 24 MB | 93.3% | Muy Rápida | Mejor para aplicaciones móviles |
 
-### Model Performance Comparison
+### Comparación de Rendimiento de Modelos
 
-The following table shows the measured accuracy scores in DeepFace compared to the scores reported in the original studies:
+La siguiente tabla muestra las puntuaciones de precisión medidas en DeepFace en comparación con las puntuaciones reportadas en los estudios originales:
 
-| Model | Measured Score | Declared Score |
+| Modelo | Puntuación Medida | Puntuación Declarada |
 |-------|---------------|----------------|
 | Facenet512 | 98.4% | 99.6% |
-| Human-beings | 97.5% | 97.5% |
+| Seres humanos | 97.5% | 97.5% |
 | Facenet | 97.4% | 99.2% |
 | Dlib | 96.8% | 99.3% |
 | VGG-Face | 96.7% | 98.9% |
@@ -136,98 +136,147 @@ The following table shows the measured accuracy scores in DeepFace compared to t
 | DeepFace | 69.0% | 97.3% |
 | DeepID | 66.5% | 97.4% |
 
-### Choosing the Right Model
+### Elegir el Modelo Adecuado
 
-- For highest accuracy: **Facenet512**
-- For best speed/accuracy balance: **Facenet** or **VGG-Face**
-- For resource-constrained environments: **GhostFaceNet**
-- For challenging poses and lighting: **ArcFace**
+- Para mayor precisión: **Facenet512**
+- Para mejor equilibrio velocidad/precisión: **Facenet** o **VGG-Face**
+- Para entornos con recursos limitados: **GhostFaceNet**
+- Para poses e iluminación desafiantes: **ArcFace**
 
-## Face Detection Backends
+## Backends de Detección Facial
 
-DeepFace supports multiple face detection backends:
+DeepFace soporta múltiples backends de detección facial:
 
-| Detector | Speed | Accuracy | Notes |
+| Detector | Velocidad | Precisión | Notas |
 |----------|-------|----------|-------|
-| opencv | Very Fast | Moderate | Default, best for speed |
-| ssd | Fast | Good | Good balance of speed and accuracy |
-| dlib | Medium | Good | Reliable detection |
-| mtcnn | Slow | Very Good | Accurate but slower |
-| retinaface | Slow | Excellent | Best accuracy, especially for challenging images |
-| mediapipe | Fast | Good | Good for video streams |
-| yolov8 | Medium | Very Good | Good for multiple faces |
-| yunet | Fast | Good | Efficient detection |
-| centerface | Fast | Good | Fast with good accuracy |
+| opencv | Muy Rápida | Moderada | Predeterminada, mejor para velocidad |
+| ssd | Rápida | Buena | Buen equilibrio entre velocidad y precisión |
+| dlib | Media | Buena | Detección confiable |
+| mtcnn | Lenta | Muy Buena | Precisa pero más lenta |
+| retinaface | Lenta | Excelente | Mejor precisión, especialmente para imágenes desafiantes |
+| mediapipe | Rápida | Buena | Bueno para transmisiones de video |
+| yolov8 | Media | Muy Buena | Bueno para múltiples rostros |
+| yunet | Rápida | Buena | Detección eficiente |
+| centerface | Rápida | Buena | Rápida con buena precisión |
 
-## Similarity Metrics
+## Métricas de Similitud
 
-DeepFace supports different distance metrics to determine the similarity between face embeddings. The choice of metric can affect both accuracy and the interpretation of results.
+DeepFace soporta diferentes métricas de distancia para determinar la similitud entre los embeddings faciales. La elección de la métrica puede afectar tanto la precisión como la interpretación de los resultados.
 
-| Metric | Description | Threshold | Interpretation | Best For |
+| Métrica | Descripción | Umbral | Interpretación | Mejor Para |
 |--------|-------------|-----------|----------------|----------|
-| cosine | Measures the cosine of the angle between vectors | 0.68 | Lower is more similar (0-1 range) | Default and works well in most cases |
-| euclidean | Measures straight-line distance between vectors | 100 | Lower is more similar (unbounded) | When vector magnitudes matter |
-| euclidean_l2 | Normalized euclidean distance | 0.80 | Lower is more similar (0-1 range) | When you need normalized results |
+| cosine | Mide el coseno del ángulo entre vectores | 0.68 | Menor es más similar (rango 0-1) | Predeterminado y funciona bien en la mayoría de los casos |
+| euclidean | Mide la distancia en línea recta entre vectores | 100 | Menor es más similar (sin límite) | Cuando importan las magnitudes de los vectores |
+| euclidean_l2 | Distancia euclidiana normalizada | 0.80 | Menor es más similar (rango 0-1) | Cuando necesitas resultados normalizados |
 
-### Choosing the Right Similarity Metric
+### Elegir la Métrica de Similitud Adecuada
 
-The choice of similarity metric depends on your specific use case:
+La elección de la métrica de similitud depende de su caso de uso específico:
 
-- **cosine**: Best for general face recognition tasks. It focuses on the direction of vectors rather than magnitude, making it robust to certain variations.
+- **cosine**: Mejor para tareas generales de reconocimiento facial. Se centra en la dirección de los vectores en lugar de la magnitud, haciéndola robusta a ciertas variaciones.
 
-- **euclidean**: Considers both direction and magnitude. May be more sensitive to the scale of features.
+- **euclidean**: Considera tanto la dirección como la magnitud. Puede ser más sensible a la escala de las características.
 
-- **euclidean_l2**: Provides normalized results, which can be easier to interpret and set thresholds for.
+- **euclidean_l2**: Proporciona resultados normalizados, que pueden ser más fáciles de interpretar y establecer umbrales.
 
-You can specify the similarity metric in your API calls:
+Puede especificar la métrica de similitud en sus llamadas a la API:
 
 ```python
 result = DeepFace.verify(
     img1_path=img1_array,
     img2_path=img2_array,
     model_name="ArcFace",
-    distance_metric="cosine"  # Options: "cosine", "euclidean", "euclidean_l2"
+    distance_metric="cosine"  # Opciones: "cosine", "euclidean", "euclidean_l2"
 )
 ```
 
-### Impact on Verification Results
+### Impacto en los Resultados de Verificación
 
-Different metrics will produce different distance values and use different thresholds:
+Diferentes métricas producirán diferentes valores de distancia y utilizarán diferentes umbrales:
 
-- With **cosine**, two faces are considered the same person if the distance is less than 0.68
-- With **euclidean**, the threshold is typically around 100
-- With **euclidean_l2**, the threshold is approximately 0.80
+- Con **cosine**, dos rostros se consideran de la misma persona si la distancia es menor que 0.68
+- Con **euclidean**, el umbral es típicamente alrededor de 100
+- Con **euclidean_l2**, el umbral es aproximadamente 0.80
 
-The API returns both the calculated distance and the threshold used, allowing you to understand how confident the system is in its verification result.
+La API devuelve tanto la distancia calculada como el umbral utilizado, permitiéndole entender cuán confiado está el sistema en su resultado de verificación.
 
-## Configuration Options
+## Opciones de Configuración
 
-The API can be configured with various options:
+La API puede configurarse con varias opciones:
 
-- **Face Recognition Model**: Change the model used for face comparison
-- **Face Detection Backend**: Select the method used to detect faces in images
-- **Similarity Metrics**: Choose between cosine, euclidean, or euclidean_l2
-- **Enforce Detection**: Set to true to ensure faces are detected before comparison
+- **Modelo de Reconocimiento Facial**: Cambiar el modelo utilizado para la comparación facial
+- **Backend de Detección Facial**: Seleccionar el método utilizado para detectar rostros en imágenes
+- **Métricas de Similitud**: Elegir entre cosine, euclidean o euclidean_l2
+- **Forzar Detección**: Establecer como true para asegurar que los rostros sean detectados antes de la comparación
 
-## Troubleshooting
+## Solución de Problemas
 
-### Common Issues
+### Problemas Comunes
 
-1. **Missing Dependencies**: If you encounter errors about missing modules, ensure all dependencies are installed:
+1. **Dependencias Faltantes**: Si encuentra errores sobre módulos faltantes, asegúrese de que todas las dependencias estén instaladas:
    ```bash
    pip install -r requirements.txt
    ```
 
-2. **Model Download Issues**: The first time you run a comparison, DeepFace will download the required model files. Ensure you have internet connectivity.
+2. **Problemas de Descarga de Modelos**: La primera vez que ejecute una comparación, DeepFace descargará los archivos de modelo requeridos. Asegúrese de tener conectividad a internet.
 
-3. **Memory Issues**: Face recognition can be memory-intensive. If you encounter memory errors, try:
-   - Using a lighter model like GhostFaceNet
-   - Processing smaller images
-   - Increasing your system's swap space
+3. **Problemas de Memoria**: El reconocimiento facial puede requerir mucha memoria. Si encuentra errores de memoria, intente:
+   - Usar un modelo más ligero como GhostFaceNet
+   - Procesar imágenes más pequeñas
+   - Aumentar el espacio de intercambio de su sistema
 
-4. **S3 Connection Issues**: If you're using S3 integration, verify your AWS credentials and network connectivity.
+4. **Problemas de Conexión S3**: Si está utilizando la integración con S3, verifique sus credenciales de AWS y la conectividad de red.
 
-## Acknowledgments
+## Agradecimientos
 
-- [DeepFace](https://github.com/serengil/deepface) for the face recognition framework
-- [FastAPI](https://fastapi.tiangolo.com/) for the API framework 
+- [DeepFace](https://github.com/serengil/deepface) por el framework de reconocimiento facial
+- [FastAPI](https://fastapi.tiangolo.com/) por el framework de API
+
+## Verificación Facial
+
+Esta función verifica si dos imágenes de rostro corresponden a la misma persona. El resultado incluye un valor de `distance` (distancia entre embeddings) y un `threshold` (umbral) para tomar la decisión.
+
+### Umbrales recomendados por modelo
+
+| Modelo       | Umbral (threshold) |
+|--------------|--------------------|
+| VGG-Face     | 0.40               |
+| Facenet      | 0.20               |
+| Facenet512   | 0.30               |
+| OpenFace     | 0.42               |
+| DeepFace     | 0.23               |
+| DeepID       | 0.10               |
+| ArcFace      | 0.40               |
+| Dlib         | 0.62               |
+| SFace        | 0.45               |
+
+La comparación se considera positiva (`verified: true`) cuando:
+```
+distance ≤ threshold
+```
+
+### Interpretación de distancias y umbrales
+
+- **Distance**: Representa la "distancia" o diferencia entre los dos vectores de características (embeddings). Cuanto menor sea este valor, más parecidos son los rostros.
+  - Con dos imágenes idénticas, la distancia será cercana a cero (ej. 6.66e-16)
+  - Con dos imágenes de la misma persona pero diferentes, la distancia será típicamente entre 0.1 y 0.3
+  - Con imágenes de personas diferentes, la distancia suele ser mayor que el umbral
+
+- **Threshold**: Es el valor límite para decidir si dos rostros pertenecen a la misma persona:
+  - Si distance ≤ threshold → `verified: true` (misma persona)
+  - Si distance > threshold → `verified: false` (personas diferentes)
+
+### Ejemplos de valores de distancia:
+
+1. **Imágenes idénticas**: distance ≈ 0
+2. **Misma persona, diferente imagen**: distance ≈ 0.1-0.3
+3. **Personas diferentes**: distance > umbral del modelo
+
+Es importante notar que el valor concreto de distance dependerá del modelo utilizado y puede verse afectado por cambios en la apariencia como barba, peinado, envejecimiento, iluminación o ángulo de la foto.
+
+### Ajuste de umbrales
+
+- Para **mayor seguridad** (reducir falsos positivos): Utilice un umbral más bajo
+- Para **mayor flexibilidad** (reducir falsos negativos): Utilice un umbral más alto
+
+Para aplicaciones de alta seguridad, es recomendable establecer umbrales más estrictos que los valores predeterminados. 

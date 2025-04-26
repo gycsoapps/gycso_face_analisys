@@ -3,6 +3,11 @@ from typing import Dict, Any, Optional, List, Union
 from config import get_settings
 
 settings = get_settings()
+
+class EventBridgeRequest(BaseModel):
+    body: str = Field(..., description="Base64 encoded image string")
+ 
+
 # Request models
 class Base64ComparisonRequest(BaseModel):
     image1: str = Field(..., description="Base64 encoded image string")

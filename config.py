@@ -7,9 +7,9 @@ class Settings(BaseSettings):
     AWS_SECRET_ACCESS_KEY: str = ""
     AWS_REGION: str = ""
     S3_BUCKET: str = ""
-    DEFAULT_MODEL: str = ""
-    DEFAULT_DETECTOR: str = ""
-    LOG_LEVEL: str = ""
+    DEFAULT_MODEL: str = "Facenet512"
+    DEFAULT_DETECTOR: str = "ssd"
+    LOG_LEVEL: str = "INFO"
     
     # API settings
     API_TITLE: str = "Face Recognition API"

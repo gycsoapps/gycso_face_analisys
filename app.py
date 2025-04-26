@@ -7,7 +7,8 @@ from mangum import Mangum
 # Import from our modules
 from config import get_settings
 from models import (
-    Base64ComparisonRequest, 
+    Base64ComparisonRequest,
+    EventBridgeRequest, 
     S3ComparisonRequest, 
     FaceComparisonResponse,
     HealthResponse,
@@ -32,7 +33,10 @@ try:
     # Reduce TensorFlow logging during model loading
     # os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
     # Preload the model that will be used
-    FaceService.preload_models(model_name=settings.DEFAULT_MODEL)
+    FaceService.preload_models(
+        model_name=settings.DEFAULT_MODEL,
+        detector_backend=settings.DEFAULT_DETECTOR
+    )
     logger.info(f"Models preloaded successfully in {time.time() - start_time:.2f} seconds")
 except Exception as e:
     logger.error(f"Error preloading models: {str(e)}")
@@ -45,7 +49,7 @@ app = FastAPI(
 )
 
 # API Endpoints
-@app.post("/compare-base64", 
+@app.post("/api/photo/compare-base64", 
           response_model=FaceComparisonResponse, 
           summary="Compare two base64 encoded images",
           description="Takes two base64 encoded images and returns whether they contain the same person",
@@ -78,7 +82,7 @@ def compare_base64_images(request: Base64ComparisonRequest):
         logger.error(f"Error in face comparison: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/compare-with-s3", 
+@app.post("/api/photo/compare-with-s3", 
           response_model=FaceComparisonResponse,
           summary="Compare base64 image with S3 image",
           description="Compares a base64 encoded image with an image stored in AWS S3",
@@ -114,11 +118,12 @@ def compare_with_s3_image(request: S3ComparisonRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 # Health check endpoint
-@app.get("/health", 
+@app.post("/api/photo/health", 
          response_model=HealthResponse, 
          summary="Health check endpoint")
-def health_check():
+def health_check(request: EventBridgeRequest):
     """Simple health check endpoint to verify the API is running"""
+    logger.info(f"Received EventBridge request: {request.body}")
     return {
         "status": "healthy", 
         "service": "face-recognition-api",
@@ -128,6 +133,66 @@ def health_check():
 # Create Lambda handler
 handler = Mangum(app, lifespan="off")
 
-if __name__ == '__main__':
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000) 
+# Wrapper para manejar tanto eventos de API Gateway como de EventBridge
+def lambda_handler(event, context):
+    """
+    Handler personalizado para manejar eventos de API Gateway y EventBridge
+    """
+    logger.info(f"Received event: {event}")
+    
+    # Verificar si es un evento de EventBridge 
+    # Caso 1: Evento estándar de EventBridge (tiene source o detail-type)
+    # Caso 2: Evento personalizado con payload específico {"body":"EventBridge call"}
+    if 'source' in event or 'detail-type' in event or (isinstance(event, dict) and event.get('body') == 'EventBridge call'):
+        logger.info("Processing EventBridge event")
+        
+        # Si el evento es el payload personalizado, simulamos una llamada al endpoint health
+        if isinstance(event, dict) and 'body' in event:
+            try:
+                # Simulamos una llamada al endpoint health con el body recibido
+                logger.info(f"Calling health endpoint with body: {event['body']}")
+                
+                # Crear objeto EventBridgeRequest
+                from models import EventBridgeRequest
+                request = EventBridgeRequest(body=event['body'])
+                
+                # Llamar al endpoint directamente
+                result = health_check(request)
+                
+                # Formatear respuesta para Lambda
+                return {
+                    "statusCode": 200,
+                    "body": {
+                        "status": result["status"],
+                        "service": result["service"],
+                        "version": result["version"],
+                        "message": "Successfully processed scheduled event with payload"
+                    }
+                }
+            except Exception as e:
+                logger.error(f"Error processing EventBridge payload: {str(e)}")
+                return {
+                    "statusCode": 500,
+                    "body": {
+                        "error": str(e)
+                    }
+                }
+        
+        # Respuesta estándar para otros eventos de EventBridge
+        return {
+            "statusCode": 200,
+            "body": {
+                "status": "healthy",
+                "service": "face-recognition-api",
+                "version": settings.API_VERSION,
+                "message": "Successfully processed scheduled event"
+            }
+        }
+    
+    # Si no es un evento de EventBridge, pasar al handler de Mangum
+    logger.info("Processing API Gateway event")
+    return handler(event, context)
+
+# if __name__ == '__main__':
+#     import uvicorn
+#     uvicorn.run(app, host="0.0.0.0", port=8000) 
