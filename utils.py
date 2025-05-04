@@ -51,7 +51,6 @@ def decode_base64_to_image(base64_string: str) -> np.ndarray:
         logger.error(f"Error decoding base64 image: {str(e)}")
         raise HTTPException(status_code=400, detail=f"Invalid base64 image: {str(e)}")
 
-@lru_cache(maxsize=100)
 def get_image_from_s3_cached(s3_key: str) -> np.ndarray:
     """Get image from S3 with caching for frequently accessed images"""
     try:

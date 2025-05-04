@@ -77,7 +77,8 @@ def compare_base64_images(request: Base64ComparisonRequest):
         
         logger.info(f"Base64 comparison completed in {time.time() - start_time:.2f} seconds")
         return result
-        
+    except HTTPException as http_exc:
+        raise http_exc
     except Exception as e:
         logger.error(f"Error in face comparison: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -112,7 +113,8 @@ def compare_with_s3_image(request: S3ComparisonRequest):
         
         logger.info(f"S3 comparison completed in {time.time() - start_time:.2f} seconds")
         return result
-        
+    except HTTPException as http_exc:
+        raise http_exc
     except Exception as e:
         logger.error(f"Error in S3 face comparison: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -138,7 +140,7 @@ def lambda_handler(event, context):
     """
     Handler personalizado para manejar eventos de API Gateway y EventBridge
     """
-    logger.info(f"Received event: {event}")
+    logger.warning(f"Received event: {event}")
     
     # Verificar si es un evento de EventBridge 
     # Caso 1: Evento estándar de EventBridge (tiene source o detail-type)
