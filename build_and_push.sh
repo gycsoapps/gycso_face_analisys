@@ -2,7 +2,7 @@
 # Script to build and push the Docker image to ECR for AWS Lambda (ARM64 Architecture)
 
 echo "Building Docker image for ARM64 architecture..."
-docker build --platform linux/arm64 -t python:latest .
+docker build --platform linux/arm64 -t face_recognition_python:latest .
 
 # Check if the build was successful
 if [ $? -ne 0 ]; then

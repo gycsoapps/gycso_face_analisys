@@ -1,5 +1,5 @@
 # Dockerfile optimized for AWS Lambda with Face Recognition
-FROM public.ecr.aws/lambda/python:3.9
+FROM public.ecr.aws/lambda/python:3.9-arm64
 
 # Set environment variable to redirect DeepFace cache to writable /tmp
 ENV DEEPFACE_HOME=/tmp

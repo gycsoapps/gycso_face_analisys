@@ -11,6 +11,27 @@ from config import get_settings
 
 logger = logging.getLogger(__name__)
 
+def _convert_image_to_array(image: Image.Image) -> np.ndarray:
+    """Convert PIL Image to numpy array with proper RGB conversion and BGR ordering"""
+    # Convert to RGB (removes alpha channel if present)
+    if image.mode in ('RGBA', 'LA') or (image.mode == 'P' and 'transparency' in image.info):
+        # Create a white background
+        background = Image.new('RGB', image.size, (255, 255, 255))
+        # Paste the image on the background using alpha channel as mask
+        background.paste(image, mask=image.split()[-1] if image.mode == 'RGBA' else None)
+        image = background
+    elif image.mode != 'RGB':
+        image = image.convert('RGB')
+        
+    # Convert to numpy array
+    img_array = np.array(image)
+    
+    # Convert RGB to BGR if needed (for OpenCV/DeepFace)
+    if len(img_array.shape) == 3 and img_array.shape[2] == 3:
+        img_array = img_array[:, :, ::-1]
+        
+    return img_array
+
 def get_s3_client():
     """Get AWS S3 client with credentials from settings"""
     settings = get_settings()
@@ -35,18 +56,7 @@ def decode_base64_to_image(base64_string: str) -> np.ndarray:
         # Convert to PIL Image
         image = Image.open(io.BytesIO(image_data))
         
-            # Convert to RGB (removes alpha channel if present)
-        if image.mode != 'RGB':
-            image = image.convert('RGB')
-            
-        # Convert to numpy array
-        img_array = np.array(image)
-        
-        # Convert RGB to BGR if needed (for OpenCV/DeepFace)
-        if len(img_array.shape) == 3 and img_array.shape[2] == 3:
-            img_array = img_array[:, :, ::-1]
-            
-        return img_array
+        return _convert_image_to_array(image)
     except Exception as e:
         logger.error(f"Error decoding base64 image: {str(e)}")
         raise HTTPException(status_code=400, detail=f"Invalid base64 image: {str(e)}")
@@ -87,13 +97,7 @@ def get_image_from_s3(s3_key: str) -> np.ndarray:
     # Convert to numpy array
     try:
         image = Image.open(io.BytesIO(image_data))
-        img_array = np.array(image)
-        
-        # Convert RGB to BGR if needed
-        if len(img_array.shape) == 3 and img_array.shape[2] == 3:
-            img_array = img_array[:, :, ::-1]
-            
-        return img_array
+        return _convert_image_to_array(image)
     except Exception as e:
         logger.error(f"Error processing image data: {str(e)}")
         raise HTTPException(status_code=500, 
